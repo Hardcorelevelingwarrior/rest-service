@@ -29,7 +29,7 @@ podTemplate(yaml: '''
 ''') {
   node(POD_LABEL) {
     stage('Get the project') {
-      git url: 'https://github.com/Hardcorelevelingwarrior/simple-java-maven-app.git', branch: 'master'
+      git url: 'https://github.com/Hardcorelevelingwarrior/rest-service.git', branch: 'master'
       container('maven') {
         stage('Build and test the project') {
           sh '''
