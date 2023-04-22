@@ -60,26 +60,31 @@ podTemplate(yaml: '''
       
      
 
-    stage('Build & Test the Docker Image') {
-      container('kaniko') {
-        stage('Deploy to DockerHub') {
-          sh '''
-            /kaniko/executor --context `pwd` --destination conmeobeou1253/mavendemo:latest
-          '''
+    stage('Build & Test the Docker Image') {  
+     stage('Anchore analyse') {  
+     writeFile file: 'anchore_images', text: 'docker.io/conmeobeou1253/mavendemo'  
+     anchore bailOnFail: false, bailOnPluginFail: false, name: 'anchore_images' 
+     
+     }    
+    }
+    stage("Image to container"){
+        container('maven'){
+
+            stage('Create and push container') {
+                withCredentials([usernamePassword(credentialsId: 'docker-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {                  
+                        sh "mvn jib:build"
+                }
+            }
         }
-      }
     }
      stage('Anchore analyse') {  
      writeFile file: 'anchore_images', text: 'docker.io/conmeobeou1253/mavendemo'  
      anchore bailOnFail: false, bailOnPluginFail: false, name: 'anchore_images' 
      
      }    
-
-      
-    stage("Image to container"){
-        container('maven'){
-            stage('Deploy to K8s') {
-      
+  
+        stage('Deploy to K8s') {
+          container('kaniko'){
         withKubeConfig([credentialsId: 'kubernetes-config']) {
           httpRequest ignoreSslErrors: true, outputFile: './kubectl', responseHandle: 'NONE', url: 'https://storage.googleapis.com/kubernetes-release/release/v1.25.3/bin/linux/amd64/kubectl', wrapAsMultipart: false
             sh 'chmod u+x ./kubectl'
@@ -88,7 +93,7 @@ podTemplate(yaml: '''
       } 
     }
         }
-    }
+    
   }
 }
   
