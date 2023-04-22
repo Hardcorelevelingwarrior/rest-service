@@ -32,10 +32,10 @@ metadata:
   name: mavendemo
 spec:
   ports:
-  - name: 8090-8090
-    port: 8090
+  - name: 8080-8080
+    port: 8080
     protocol: TCP
-    targetPort: 8090
+    targetPort: 8080
   selector:
     app: mavendemo
   type: LoadBalancer
