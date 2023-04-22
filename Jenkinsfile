@@ -63,6 +63,29 @@ podTemplate(yaml: '''
         }
       }
     }
+     stage('Anchore analyse') {  
+     writeFile file: 'anchore_images', text: 'docker.io/conmeobeou1253/mavendemo'  
+     anchore bailOnFail: false, bailOnPluginFail: false, name: 'anchore_images' 
+     
+     }    
 
+      
+    stage("Image to container"){
+        container('maven'){
+            stage('Deploy to K8s') {
+      
+        withKubeConfig([credentialsId: 'kubernetes-config']) {
+          httpRequest ignoreSslErrors: true, outputFile: './kubectl', responseHandle: 'NONE', url: 'https://storage.googleapis.com/kubernetes-release/release/v1.25.3/bin/linux/amd64/kubectl', wrapAsMultipart: false
+            sh 'chmod u+x ./kubectl'
+          sh './kubectl apply -f k8s.yaml'
+        
+      } 
+    }
+        }
+    }
   }
 }
+  
+  
+  
+
