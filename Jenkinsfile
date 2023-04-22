@@ -9,6 +9,9 @@ podTemplate(yaml: '''
         - sleep
         args:
         - 99d
+        volumeMounts:
+        - mountPath: "/etc/ssl"
+          name: ssl
       - name: kaniko
         image: gcr.io/kaniko-project/executor:debug
         command:
@@ -20,6 +23,9 @@ podTemplate(yaml: '''
           mountPath: /kaniko/.docker
       restartPolicy: Never
       volumes:
+      - name: ssl
+        secret:
+          secretName: job-certs
       - name: kaniko-secret
         secret:
             secretName: dockercred
