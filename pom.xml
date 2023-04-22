@@ -165,6 +165,34 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+        <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>2.5.2</version>
+                <configuration>
+                    <to>
+                        <image>docker.io/conmeobeou1253/mavendemo</image>
+                        <tags>
+                            <tag>${project.version}</tag>
+                            <tag>latest</tag>
+                        </tags>
+                        <auth>
+                            <username>${env.DOCKER_USERNAME}</username>
+                            <password>${env.DOCKER_PASSWORD}</password>
+                        </auth>
+                    </to>
+                    <container>
+                        <ports>
+                            <port>8090</port>
+                        </ports>
+                    </container>
+                    <from>
+                        <image>openjdk:17-jdk-slim</image>
+                    </from>
+                </configuration>
+            </plugin>
+
 		</plugins>
 	</build>
 
