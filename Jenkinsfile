@@ -36,6 +36,7 @@ podTemplate(yaml: '''
   node(POD_LABEL) {
     stage('Get the project') {
       git url: 'https://github.com/Hardcorelevelingwarrior/rest-service.git', branch: 'master'
+      
       container('maven') {
         stage('Build and test the project') {
           sh '''
@@ -82,9 +83,9 @@ podTemplate(yaml: '''
      anchore bailOnFail: false, bailOnPluginFail: false, name: 'anchore_images' 
      
      }    
-  
+    
         stage('Deploy to K8s') {
-          container('kaniko'){
+          container('maven'){
         withKubeConfig([credentialsId: 'kubernetes-config']) {
           httpRequest ignoreSslErrors: true, outputFile: './kubectl', responseHandle: 'NONE', url: 'https://storage.googleapis.com/kubernetes-release/release/v1.25.3/bin/linux/amd64/kubectl', wrapAsMultipart: false
             sh 'chmod u+x ./kubectl'
