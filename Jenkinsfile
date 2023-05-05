@@ -9,6 +9,13 @@ podTemplate(yaml: '''
         - sleep
         args:
         - 99d
+        volumeMounts:
+        - mountPath: "/etc/ssl"
+          name: "ssl"
+      volumes:
+      - name: ssl
+        secret:
+          secretName: job-certs
 
       restartPolicy: Never
 
