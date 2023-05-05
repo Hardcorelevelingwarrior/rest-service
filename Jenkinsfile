@@ -9,14 +9,9 @@ podTemplate(yaml: '''
         - sleep
         args:
         - 99d
-        volumeMounts:
-        - mountPath: "/etc/ssl"
-          name: "ssl"
+
       restartPolicy: Never
-      volumes:
-      - name: ssl
-        secret:
-          secretName: job-certs
+
 ''') {
   node(POD_LABEL) {
     stage('Get the project') {
@@ -53,7 +48,7 @@ podTemplate(yaml: '''
           container('maven'){
         withKubeConfig([credentialsId: 'kubernetes-config']) {
           httpRequest ignoreSslErrors: true, outputFile: './kubectl', responseHandle: 'NONE', url: 'https://storage.googleapis.com/kubernetes-release/release/v1.25.3/bin/linux/amd64/kubectl', wrapAsMultipart: false
-            sh 'chmod u+x ./kubectl'
+          sh 'chmod u+x ./kubectl'
           sh './kubectl apply -f k8s.yaml'
         
       } 
