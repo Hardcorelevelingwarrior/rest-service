@@ -9,7 +9,6 @@ podTemplate(yaml: '''
         - sleep
         args:
         - 99d
-        volumeMounts:
 
       restartPolicy: Never
       volumes:
