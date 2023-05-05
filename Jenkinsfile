@@ -21,7 +21,14 @@ podTemplate(yaml: '''
   node(POD_LABEL) {
     stage('Get the project') {
       git url: 'https://github.com/Hardcorelevelingwarrior/rest-service.git', branch: 'master'
-      
+       container('maven') {
+        stage('Build and test the project') {
+          sh '''
+          mvn -B -DskipTests clean package
+          ''' }
+
+        }  
+        
         
         }
       
