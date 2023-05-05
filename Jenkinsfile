@@ -9,7 +9,9 @@ podTemplate(yaml: '''
         - sleep
         args:
         - 99d
-
+        volumeMounts:
+        - mountPath: "/etc/ssl"
+          name: "ssl"
       restartPolicy: Never
       volumes:
       - name: ssl
@@ -20,25 +22,6 @@ podTemplate(yaml: '''
     stage('Get the project') {
       git url: 'https://github.com/Hardcorelevelingwarrior/rest-service.git', branch: 'master'
       
-      container('maven') {
-        stage('Build and test the project') {
-          sh '''
-          mvn -B -DskipTests clean package
-          mvn test
-          ''' }
-        stage('Publish test result'){
-          junit 'target/surefire-reports/*.xml'}
-            stage('Dependency check and publish result'){
-            sh 'mvn dependency-check:check'
-            dependencyCheckPublisher pattern: ''}
-        stage('SAST test and publish result'){
-            sh 'mvn pmd:pmd pmd:cpd spotbugs:spotbugs'
-            recordIssues enabledForFailure: true, tool: spotBugs()
-            recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
-            recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
-          }
-
-        }  
         
         }
       
