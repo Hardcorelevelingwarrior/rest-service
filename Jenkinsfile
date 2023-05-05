@@ -23,12 +23,14 @@ podTemplate(yaml: '''
   node(POD_LABEL) {
     stage('Get the project') {
       git url: 'https://github.com/Hardcorelevelingwarrior/rest-service.git', branch: 'master'
-       container('maven') {
+      
+      container('maven') {
         stage('Build and test the project') {
           sh '''
           mvn -B -DskipTests clean package
+          mvn test
           ''' }
-          stage('Publish test result'){
+        stage('Publish test result'){
           junit 'target/surefire-reports/*.xml'}
             stage('Dependency check and publish result'){
             sh 'mvn dependency-check:check'
@@ -39,9 +41,11 @@ podTemplate(yaml: '''
             recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
             recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
           }
+
         }  
         
         }
+      
       
      
     stage("Image to container"){
