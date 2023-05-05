@@ -33,14 +33,6 @@ podTemplate(yaml: '''
         }
       
      
-
-    stage('Build & Test the Docker Image') {  
-     stage('Anchore analyse') {  
-     writeFile file: 'anchore_images', text: 'docker.io/conmeobeou1253/mavendemo'  
-     anchore bailOnFail: false, bailOnPluginFail: false, name: 'anchore_images' 
-     
-     }    
-    }
     stage("Image to container"){
         container('maven'){
 
