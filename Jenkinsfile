@@ -28,9 +28,18 @@ podTemplate(yaml: '''
           sh '''
           mvn -B -DskipTests clean package
           ''' }
-
+          stage('Publish test result'){
+          junit 'target/surefire-reports/*.xml'}
+            stage('Dependency check and publish result'){
+            sh 'mvn dependency-check:check'
+            dependencyCheckPublisher pattern: ''}
+        stage('SAST test and publish result'){
+            sh 'mvn pmd:pmd pmd:cpd spotbugs:spotbugs'
+            recordIssues enabledForFailure: true, tool: spotBugs()
+            recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
+            recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
+          }
         }  
-        
         
         }
       
