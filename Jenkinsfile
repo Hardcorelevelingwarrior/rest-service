@@ -10,8 +10,8 @@ podTemplate(yaml: '''
         args:
         - 99d
         volumeMounts:
-        - mountPath: "/etc/ssl"
-          name: ssl
+        //- mountPath: "/etc/ssl"
+          //name: ssl
       restartPolicy: Never
       volumes:
       - name: ssl
