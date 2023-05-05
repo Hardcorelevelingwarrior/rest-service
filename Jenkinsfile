@@ -12,26 +12,11 @@ podTemplate(yaml: '''
         volumeMounts:
         - mountPath: "/etc/ssl"
           name: ssl
-      - name: kaniko
-        image: gcr.io/kaniko-project/executor:debug
-        command:
-        - sleep
-        args:
-        - 9999999
-        volumeMounts:
-        - name: kaniko-secret
-          mountPath: /kaniko/.docker
       restartPolicy: Never
       volumes:
       - name: ssl
         secret:
           secretName: job-certs
-      - name: kaniko-secret
-        secret:
-            secretName: dockercred
-            items:
-            - key: .dockerconfigjson
-              path: config.json
 ''') {
   node(POD_LABEL) {
     stage('Get the project') {
